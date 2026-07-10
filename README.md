@@ -10,3 +10,9 @@
 ```
 dotnet add package Soenneker.Zoho.HttpClients
 ```
+
+The parameterless `Get()` uses `Zoho:ApiKey` and `Zoho:ClientBaseUrl`. Pass connection values explicitly to work with multiple Zoho tenants or data centers:
+
+```csharp
+HttpClient tenantClient = await zohoOpenApiHttpClient.Get(tenantApiKey, tenantBaseUrl);
+```
