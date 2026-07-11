@@ -17,7 +17,7 @@ namespace Soenneker.Zoho.HttpClients;
 public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
-    private readonly string _apiKey;
+    private readonly IConfiguration _configuration;
     private readonly string _baseUrl;
     private readonly string _authHeaderName;
     private readonly string _authHeaderValueTemplate;
@@ -28,7 +28,7 @@ public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
     public ZohoOpenApiHttpClient(IHttpClientCache httpClientCache, IConfiguration config)
     {
         _httpClientCache = httpClientCache;
-        _apiKey = config.GetValueStrict<string>("Zoho:ApiKey");
+        _configuration = config;
         _baseUrl = config["Zoho:ClientBaseUrl"] ?? _prodBaseUrl;
         _authHeaderName = config["Zoho:AuthHeaderName"] ?? "Authorization";
         _authHeaderValueTemplate = config["Zoho:AuthHeaderValueTemplate"] ?? "Bearer {token}";
@@ -36,7 +36,7 @@ public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return Get(_apiKey, _baseUrl, cancellationToken);
+        return Get(_configuration.GetValueStrict<string>("Zoho:ApiKey"), _baseUrl, cancellationToken);
     }
 
     public ValueTask<HttpClient> Get(string apiKey, CancellationToken cancellationToken = default)
