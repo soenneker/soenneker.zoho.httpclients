@@ -43,6 +43,6 @@
     <ItemGroup>
         <PackageReference Include="Soenneker.Extensions.Configuration" Version="4.0.866" />
         <PackageReference Include="Soenneker.Hashing.XxHash" Version="4.0.81" />
-        <PackageReference Include="Soenneker.Utils.HttpClientCache" Version="4.0.2033" />
+        <PackageReference Include="Soenneker.Utils.HttpClientCache" Version="4.0.2044" />
     </ItemGroup>
 </Project>
