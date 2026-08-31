@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Description>A thread-safe singleton HttpClient for Zoho's OpenAPI integration.</Description>
+        <Description>Provides cached HTTP clients for Zoho CRM access tokens and data-center API origins.</Description>
         <Version Condition="'$(BUILD_VERSION)' == ''">4.0.0</Version>
         <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
         <AssemblyName>Soenneker.Zoho.HttpClients</AssemblyName>

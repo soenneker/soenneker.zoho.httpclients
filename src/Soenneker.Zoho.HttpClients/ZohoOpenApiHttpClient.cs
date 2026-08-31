@@ -13,7 +13,6 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.Zoho.HttpClients;
 
-///<inheritdoc cref="IZohoOpenApiHttpClient"/>
 public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
@@ -21,9 +20,10 @@ public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
     private readonly string _baseUrl;
     private readonly string _authHeaderName;
     private readonly string _authHeaderValueTemplate;
+    private readonly string _clientIdPrefix = $"{nameof(ZohoOpenApiHttpClient)}:{Guid.NewGuid():N}";
     private readonly ConcurrentDictionary<string, byte> _clientIds = new();
 
-    private const string _prodBaseUrl = "https://zohoapis.com/crm/8.0";
+    private const string _prodBaseUrl = "https://www.zohoapis.com/crm/v8/";
 
     public ZohoOpenApiHttpClient(IHttpClientCache httpClientCache, IConfiguration config)
     {
@@ -31,12 +31,13 @@ public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
         _configuration = config;
         _baseUrl = config["Zoho:ClientBaseUrl"] ?? _prodBaseUrl;
         _authHeaderName = config["Zoho:AuthHeaderName"] ?? "Authorization";
-        _authHeaderValueTemplate = config["Zoho:AuthHeaderValueTemplate"] ?? "Bearer {token}";
+        _authHeaderValueTemplate = config["Zoho:AuthHeaderValueTemplate"] ?? "Zoho-oauthtoken {token}";
     }
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return Get(_configuration.GetValueStrict<string>("Zoho:ApiKey"), _baseUrl, cancellationToken);
+        string accessToken = _configuration["Zoho:AccessToken"] ?? _configuration.GetValueStrict<string>("Zoho:ApiKey");
+        return Get(accessToken, _baseUrl, cancellationToken);
     }
 
     public ValueTask<HttpClient> Get(string apiKey, CancellationToken cancellationToken = default)
@@ -49,7 +50,7 @@ public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
         ArgumentException.ThrowIfNullOrWhiteSpace(apiKey);
         ArgumentException.ThrowIfNullOrWhiteSpace(baseUrl);
 
-        var baseUri = new Uri(baseUrl, UriKind.Absolute);
+        var baseUri = new Uri(baseUrl.EndsWith("/", StringComparison.Ordinal) ? baseUrl : $"{baseUrl}/", UriKind.Absolute);
         string clientId = GetClientId(apiKey, baseUri);
         _clientIds.TryAdd(clientId, 0);
 
@@ -73,12 +74,9 @@ public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
     {
         string value = string.Concat(apiKey, "\0", baseUri, "\0", _authHeaderName, "\0", _authHeaderValueTemplate);
 
-        return $"{nameof(ZohoOpenApiHttpClient)}:{XxHash3Util.Hash(value)}";
+        return $"{_clientIdPrefix}:{XxHash3Util.Hash(value)}";
     }
 
-    /// <summary>
-    /// Releases resources used by the current instance.
-    /// </summary>
     public void Dispose()
     {
         foreach (string clientId in _clientIds.Keys)
@@ -87,10 +85,6 @@ public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
         }
     }
 
-    /// <summary>
-    /// Asynchronously releases resources used by the current instance.
-    /// </summary>
-    /// <returns>A task that represents the asynchronous operation.</returns>
     public async ValueTask DisposeAsync()
     {
         foreach (string clientId in _clientIds.Keys)

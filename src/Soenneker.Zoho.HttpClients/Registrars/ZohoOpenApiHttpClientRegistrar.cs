@@ -11,7 +11,7 @@ namespace Soenneker.Zoho.HttpClients.Registrars;
 public static class ZohoOpenApiHttpClientRegistrar
 {
     /// <summary>
-    /// Adds <see cref="ZohoOpenApiHttpClient"/> as a singleton service. <para/>
+    /// Adds <see cref="IZohoOpenApiHttpClient"/> as a singleton service.
     /// </summary>
     public static IServiceCollection AddZohoOpenApiHttpClientAsSingleton(this IServiceCollection services)
     {
@@ -22,7 +22,7 @@ public static class ZohoOpenApiHttpClientRegistrar
     }
 
     /// <summary>
-    /// Adds <see cref="ZohoOpenApiHttpClient"/> as a scoped service. <para/>
+    /// Adds <see cref="IZohoOpenApiHttpClient"/> as a scoped service while retaining the singleton HTTP client cache.
     /// </summary>
     public static IServiceCollection AddZohoOpenApiHttpClientAsScoped(this IServiceCollection services)
     {
