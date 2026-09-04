@@ -13,6 +13,7 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.Zoho.HttpClients;
 
+/// <inheritdoc cref="IZohoOpenApiHttpClient" />
 public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
