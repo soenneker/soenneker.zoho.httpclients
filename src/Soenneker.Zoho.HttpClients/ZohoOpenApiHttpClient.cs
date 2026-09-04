@@ -51,7 +51,7 @@ public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
         ArgumentException.ThrowIfNullOrWhiteSpace(apiKey);
         ArgumentException.ThrowIfNullOrWhiteSpace(baseUrl);
 
-        var baseUri = new Uri(baseUrl.EndsWith("/", StringComparison.Ordinal) ? baseUrl : $"{baseUrl}/", UriKind.Absolute);
+        var baseUri = new Uri(baseUrl.EndsWith('/') ? baseUrl : $"{baseUrl}/", UriKind.Absolute);
         string clientId = GetClientId(apiKey, baseUri);
         _clientIds.TryAdd(clientId, 0);
 
