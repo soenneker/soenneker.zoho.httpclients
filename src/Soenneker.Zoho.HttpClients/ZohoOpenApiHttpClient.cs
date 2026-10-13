@@ -37,7 +37,7 @@ public sealed class ZohoOpenApiHttpClient : IZohoOpenApiHttpClient
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        string accessToken = _configuration["Zoho:AccessToken"] ?? _configuration.GetValueStrict<string>("Zoho:ApiKey");
+        string accessToken = _configuration["Zoho:AccessToken"] ?? _configuration.GetStringStrict("Zoho:ApiKey");
         return Get(accessToken, _baseUrl, cancellationToken);
     }
 
